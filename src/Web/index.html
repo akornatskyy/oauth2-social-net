@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Demo for OAuth2 Social Login</title>
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+</head>
+<body>
+    <div id="content">loading...</div>
+    <script>
+        var urls = {
+            site: 'http://localhost:54325',
+            auth:'http://localhost:54325',
+            api: 'http://localhost:54325'
+        };
+        var parseQueryString = function () {
+            var r = {};
+            $.each(document.location.search.substr(1).split('&'), function (c, q) {
+                var i = q.split('=');
+                r[i[0]] = i[1];
+            });
+            return r;
+        };
+        
+        (function () {
+            var $c = $('#content');
+            var renderSignIn = function () {
+                $c.html('Sign in with <a href="' +
+                        urls.auth +
+                        '/oauth2/google?returnUrl=' +
+                        urls.site +
+                        '/">google</a>, <a href="' +
+                        urls.auth +
+                        '/oauth2/facebook?returnUrl=' +
+                        urls.site +
+                        '/">facebook</a>.');
+            };
+            var renderWelcome = function (user) {
+                $c.html('Welcome, <i>' +
+                        user.name +
+                        '</i>! <a id="signout" href="#">sign out</a>');
+                $('#signout').on('click', signout);
+            };
+            var signout = function () {
+                delete $.ajaxSettings.headers['Authorization'];
+                localStorage.removeItem('token');
+                window.location = urls.site;
+                return false;
+            };
+
+            var token = localStorage.getItem('token');
+            if (!token) {
+                token = parseQueryString().token;
+                if (!token) {
+                    renderSignIn();
+                    return;
+                }
+
+                localStorage.setItem('token', token);
+                window.location = urls.site;
+                return;
+            }
+
+            $.ajaxSettings.headers = { Authorization: 'Bearer ' + token };
+            $.getJSON(urls.api + '/status')
+                .done(renderWelcome)
+                .fail(function (jqXHR) {
+                    if (jqXHR.status == 401) {
+                        signout();
+                    }
+                });
+        })();
+    </script>
+</body>
+</html>
