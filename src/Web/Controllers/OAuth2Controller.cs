@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Net.Http;
 using System.Web.Http;
 
@@ -16,7 +15,7 @@ namespace Web.Controllers
             b.Path = Url.Route("token", null);
             this.Request.GetOwinContext().Authentication.Challenge(
                 new AuthenticationProperties() { RedirectUri = b.ToString() },
-                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(provider));
+                provider.ToLowerInvariant());
             return this.Unauthorized();
         }
     }
