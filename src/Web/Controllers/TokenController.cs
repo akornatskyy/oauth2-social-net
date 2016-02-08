@@ -9,9 +9,9 @@ using Microsoft.Owin.Security.OAuth;
 
 namespace Web.Controllers
 {
+    [Authorize, Route("token", Name = "token")]
     public sealed class TokenController : ApiController
     {
-        [Authorize, Route("token")]
         public IHttpActionResult Get(string returnUrl)
         {
             Request.GetOwinContext().Authentication.SignOut();

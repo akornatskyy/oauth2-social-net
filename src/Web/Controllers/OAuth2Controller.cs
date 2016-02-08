@@ -9,11 +9,11 @@ namespace Web.Controllers
 {
     [Route("oauth2/{provider}")]
     public sealed class OAuth2Controller : ApiController
-    {        
+    {
         public IHttpActionResult Get(string provider)
         {
             var b = new UriBuilder(Request.RequestUri);
-            b.Path = "/token";
+            b.Path = Url.Route("token", null);
             this.Request.GetOwinContext().Authentication.Challenge(
                 new AuthenticationProperties() { RedirectUri = b.ToString() },
                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(provider));
