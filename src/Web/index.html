@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Demo for OAuth2 Social Login</title>
@@ -36,14 +37,28 @@
             };
             var renderWelcome = function (user) {
                 $c.html('Welcome, <i>' +
-                        user.name +
-                        '</i>! <a id="signout" href="#">sign out</a>');
+                        user.email +
+                        '</i>! <a id="signout" href="#">sign out</a> | <a id="refresh" href="#">refresh</a>');
                 $('#signout').on('click', signout);
+                $('#refresh').on('click', refresh);
             };
             var signout = function () {
                 delete $.ajaxSettings.headers['Authorization'];
                 localStorage.removeItem('token');
                 window.location = urls.site;
+                return false;
+            };
+            var refresh = function () {
+                $.post(urls.api + '/token')
+                .done(function (d) {
+                    localStorage.setItem('token', d.token);
+                    $.ajaxSettings.headers['Authorization'] = 'Bearer ' + d.token;
+                })
+                .fail(function (jqXHR) {
+                    if (jqXHR.status == 401) {
+                        signout();
+                    }
+                });
                 return false;
             };
 
@@ -56,8 +71,12 @@
                 }
 
                 localStorage.setItem('token', token);
-                window.location = urls.site;
-                return;
+                if (!history.pushState) {
+                    window.location = urls.site;
+                    return;                    
+                }
+
+                history.pushState(null, "", location.href.split("?")[0]);
             }
 
             $.ajaxSettings.headers = { Authorization: 'Bearer ' + token };
