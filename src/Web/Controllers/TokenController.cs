@@ -1,11 +1,8 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Security.Claims;
-using System.Web;
 using System.Web.Http;
 
 using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.OAuth;
 
 namespace Web.Controllers
 {
@@ -14,29 +11,33 @@ namespace Web.Controllers
     {
         public IHttpActionResult Get(string returnUrl)
         {
-            Request.GetOwinContext().Authentication.SignOut();
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                this.ModelState.AddModelError("returnUrl", Properties.Resources.Required);
+                return this.BadRequest(this.ModelState);
+            }
+
             var email = ((ClaimsPrincipal)User).FindFirst(ClaimTypes.Email);
             if (email == null)
             {
-                return this.BadRequest();
+                this.ModelState.AddModelError("email", Properties.Resources.Required);
+                return this.BadRequest(this.ModelState);
             }
 
-            var expires = 7200;
-            ClaimsIdentity identity = new ClaimsIdentity(OAuthDefaults.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.Name, email.Value));
-            var props = new AuthenticationProperties()
-            {
-                ExpiresUtc = DateTime.UtcNow.AddSeconds(expires)
-            };
+            return this.IssueChallenge(new AuthenticationProperties() { RedirectUri = returnUrl });
+        }
 
-            var ticket = new AuthenticationTicket(identity, props);
-            var token = OAuth2Config.OAuthBearerOptions.AccessTokenFormat.Protect(ticket);
-            var uri = new UriBuilder(returnUrl);
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            query.Add("token", token);
-            query.Add("expires", expires.ToString());
-            uri.Query = query.ToString();
-            return this.Redirect(uri.ToString());
+        public IHttpActionResult Post()
+        {
+            return this.IssueChallenge(new AuthenticationProperties() { AllowRefresh = true });
+        }
+
+        private IHttpActionResult IssueChallenge(AuthenticationProperties props)
+        {           
+            this.Request.GetOwinContext().Authentication.Challenge(
+                props, 
+                OAuth2Config.OAuthBearerOptions.AuthenticationType);
+            return this.Unauthorized();
         }
     }
 }
