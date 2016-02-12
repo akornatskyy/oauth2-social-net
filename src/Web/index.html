@@ -9,9 +9,9 @@
     <div id="content">loading...</div>
     <script>
         var urls = {
-            site: 'http://localhost:54325',
-            auth:'http://localhost:54325',
-            api: 'http://localhost:54325'
+            site: '',
+            auth: '',
+            api: ''
         };
         var parseQueryString = function () {
             var r = {};
@@ -21,7 +21,7 @@
             });
             return r;
         };
-        
+
         (function () {
             var $c = $('#content');
             var renderSignIn = function () {
@@ -73,7 +73,7 @@
                 localStorage.setItem('token', token);
                 if (!history.pushState) {
                     window.location = urls.site;
-                    return;                    
+                    return;
                 }
 
                 history.pushState(null, "", location.href.split("?")[0]);

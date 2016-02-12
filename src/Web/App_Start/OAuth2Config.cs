@@ -75,7 +75,7 @@ namespace Web
                     var returnUrl = props.RedirectUri;
                     if (returnUrl != null)
                     {
-                        var uri = new UriBuilder(returnUrl);
+                        var uri = new UriBuilder(new Uri(ctx.Request.Uri, returnUrl));
                         var query = HttpUtility.ParseQueryString(uri.Query);
                         query.Add("token", token);
                         query.Add("expires", OAuth2Config.TokenExpire.ToString());
