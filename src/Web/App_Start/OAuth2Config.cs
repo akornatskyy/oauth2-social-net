@@ -60,6 +60,11 @@ namespace Web
                 OnApplyChallenge = ctx =>
                 {
                     var auth = ctx.OwinContext.Authentication;
+                    if (auth.AuthenticationResponseChallenge == null)
+                    {
+                        return Task.FromResult(true);
+                    }
+
                     var claim = auth.User.FindFirst(ClaimTypes.Email);
                     if (claim == null)
                     {
