@@ -130,6 +130,8 @@
     </Compile>
     <Compile Include="App_Start\OAuth2Config.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Constants\RoutePatterns.cs" />
+    <Compile Include="Constants\RouteNames.cs" />
     <Compile Include="Controllers\OAuth2Controller.cs" />
     <Compile Include="Controllers\StatusController.cs" />
     <Compile Include="Controllers\TokenController.cs" />

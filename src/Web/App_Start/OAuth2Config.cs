@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,7 +14,6 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Facebook;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Owin;
 
@@ -83,7 +82,7 @@ namespace Web
                         var uri = new UriBuilder(new Uri(ctx.Request.Uri, returnUrl));
                         var query = HttpUtility.ParseQueryString(uri.Query);
                         query.Add("token", token);
-                        query.Add("expires", OAuth2Config.TokenExpire.ToString());
+                        query.Add("expires", OAuth2Config.TokenExpire.ToString(CultureInfo.InvariantCulture));
                         uri.Query = query.ToString();
 
                         auth.SignOut();

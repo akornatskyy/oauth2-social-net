@@ -4,9 +4,11 @@ using System.Web.Http;
 
 using Microsoft.Owin.Security;
 
+using Web.Constants;
+
 namespace Web.Controllers
 {
-    [Authorize, Route("token", Name = "token")]
+    [Authorize, Route(RoutePatterns.Token, Name = RouteNames.Token)]
     public sealed class TokenController : ApiController
     {
         public IHttpActionResult Get(string returnUrl)

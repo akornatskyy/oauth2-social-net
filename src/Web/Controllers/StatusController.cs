@@ -2,9 +2,11 @@
 using System.Security.Claims;
 using System.Web.Http;
 
+using Web.Constants;
+
 namespace Web.Controllers
 {
-    [Authorize, Route("status")]
+    [Authorize, Route(RoutePatterns.Status)]
     public sealed class StatusController : ApiController
     {
         public object Get()
