@@ -35,13 +35,6 @@
                         urls.site +
                         '/">facebook</a>.');
             };
-            var renderWelcome = function (user) {
-                $c.html('Welcome, <i>' +
-                        user.email +
-                        '</i>! <a id="signout" href="#">sign out</a> | <a id="refresh" href="#">refresh</a>');
-                $('#signout').on('click', signout);
-                $('#refresh').on('click', refresh);
-            };
             var signout = function () {
                 delete $.ajaxSettings.headers['Authorization'];
                 localStorage.removeItem('token');
@@ -54,12 +47,19 @@
                     localStorage.setItem('token', d.token);
                     $.ajaxSettings.headers['Authorization'] = 'Bearer ' + d.token;
                 })
-                .fail(function (jqXHR) {
-                    if (jqXHR.status == 401) {
+                .fail(function (jqXhr) {
+                    if (jqXhr.status === 401) {
                         signout();
                     }
                 });
                 return false;
+            };
+            var renderWelcome = function (user) {
+                $c.html('Welcome, <i>' +
+                        user.email +
+                        '</i>! <a id="signout" href="#">sign out</a> | <a id="refresh" href="#">refresh</a>');
+                $('#signout').on('click', signout);
+                $('#refresh').on('click', refresh);
             };
 
             var token = localStorage.getItem('token');
@@ -82,8 +82,8 @@
             $.ajaxSettings.headers = { Authorization: 'Bearer ' + token };
             $.getJSON(urls.api + '/status')
                 .done(renderWelcome)
-                .fail(function (jqXHR) {
-                    if (jqXHR.status == 401) {
+                .fail(function (jqXhr) {
+                    if (jqXhr.status === 401) {
                         signout();
                     }
                 });
