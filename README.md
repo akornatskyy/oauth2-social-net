@@ -26,3 +26,8 @@ OAuth2 redirect callbacks:
 update *urls* in *index.html*. See more about using custom domains 
 with IIS Express 
 [here](http://stackoverflow.com/questions/4709014/using-custom-domains-with-iis-express).
+
+## Useful Links
+
+- [Facebook](https://developers.facebook.com/apps/) for Developers
+- [Google](https://console.developers.google.com) Developers Console
