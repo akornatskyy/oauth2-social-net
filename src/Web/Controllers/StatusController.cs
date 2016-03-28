@@ -9,7 +9,8 @@ namespace Web.Controllers
     [Authorize, Route(RoutePatterns.Status)]
     public sealed class StatusController : ApiController
     {
-        public object Get()
+        [HttpGet, HttpPost]
+        public object Index()
         {
             var claim = ((ClaimsPrincipal)User).FindFirst(ClaimTypes.Email);
             Trace.Assert(claim != null);
