@@ -12,6 +12,9 @@
             site: '',
             auth: '',
             api: ''
+            /*site: 'http://web.demo-site.com:54325',
+            auth: 'http://auth.demo-site.com:54325',
+            api: 'http://api.demo-site.com:54325'*/
         };
         var parseQueryString = function () {
             var r = {};
@@ -80,13 +83,13 @@
             }
 
             $.ajaxSettings.headers = { Authorization: 'Bearer ' + token };
-            $.getJSON(urls.api + '/status')
-                .done(renderWelcome)
-                .fail(function (jqXhr) {
-                    if (jqXhr.status === 401) {
-                        signout();
-                    }
-                });
+            $.get(urls.api + '/status')
+            .done(renderWelcome)
+            .fail(function (jqXhr) {
+                if (jqXhr.status === 401) {
+                    signout();
+                }
+            });
         })();
     </script>
 </body>
