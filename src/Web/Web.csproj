@@ -135,6 +135,7 @@
     <Compile Include="Controllers\OAuth2Controller.cs" />
     <Compile Include="Controllers\StatusController.cs" />
     <Compile Include="Controllers\TokenController.cs" />
+    <Compile Include="Middleware\RequestSchemeMiddleware.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
