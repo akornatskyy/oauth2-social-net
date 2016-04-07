@@ -21,7 +21,12 @@ namespace Web
 {
     public static class OAuth2Config
     {
-        public static readonly OAuthBearerAuthenticationOptions OAuthBearerOptions = new OAuthBearerAuthenticationOptions();
+        internal static readonly OAuthBearerAuthenticationOptions OAuthBearerOptions = new OAuthBearerAuthenticationOptions();
+
+        private static readonly HttpClient FacebookHttpClient = new HttpClient
+        {
+            BaseAddress = new Uri("https://graph.facebook.com/me?fields=email")
+        };
 
         private static readonly double TokenExpire = TimeSpan.Parse(
             ConfigurationManager.AppSettings.Get("Token.ExpireTimeSpan")).TotalSeconds;
@@ -159,7 +164,7 @@ namespace Web
                         return;
                     }
 
-                    var email = await FindEmailInFacebook(options.UserInformationEndpoint, ctx.AccessToken);
+                    var email = await FindEmailInFacebook(ctx.AccessToken);
                     if (email == null)
                     {
                         return;
@@ -172,22 +177,21 @@ namespace Web
             return options;
         }
 
-        private static async Task<string> FindEmailInFacebook(string userInformationEndpoint, string accessToken)
+        private static async Task<string> FindEmailInFacebook(string accessToken)
         {
-            string content;
-            using (var client = new HttpClient())
+            var response = await FacebookHttpClient.SendAsync(new HttpRequestMessage
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await client.GetAsync(userInformationEndpoint + "?fields=email");
-                if (!response.IsSuccessStatusCode)
+                Headers =
                 {
-                    return null;
+                    Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
                 }
-
-                content = await response.Content.ReadAsStringAsync();
+            });
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
             }
 
-            var d = JObject.Parse(content);
+            var d = JObject.Parse(await response.Content.ReadAsStringAsync());
             return (string)d["email"];
         }
 
