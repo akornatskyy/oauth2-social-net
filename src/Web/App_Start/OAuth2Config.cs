@@ -25,7 +25,8 @@ namespace Web
 
         private static readonly HttpClient FacebookHttpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://graph.facebook.com/me?fields=email")
+            BaseAddress = new Uri("https://graph.facebook.com/me?fields=email"),
+            MaxResponseContentBufferSize = 256
         };
 
         private static readonly double TokenExpire = TimeSpan.Parse(
