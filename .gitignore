@@ -3,5 +3,6 @@
 *.suo
 *.user
 *.Cache
+.vs/
 packages/
 TestResults
